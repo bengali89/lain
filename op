@@ -89,7 +89,7 @@ systemctl start openvpn.service
 
 # Copy Generic Server Config
 
-cat > /etc/openvpn/server.conf << SERVER_CONFIG
+cat > /etc/openvpn/server-udp-1194.conf <<-END
 port 3128
 proto udp
 dev tun
@@ -118,7 +118,8 @@ mode server
 tls-server
 auth SHA512
 tls-cipher TLS-DHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-128-GCM-SHA256:TLS-DHE-RSA-WITH-AES-256-CBC-SHA:TLS-DHE-RSA-WITH-CAMELLIA-256-CBC-SHA:TLS-DHE-RSA-WITH-AES-128-CBC-SHA:TLS-DHE-RSA-WITH-CAMELLIA-128-CBC-SHA
-SERVER_CONFIG
+status server-udp-1194.log
+END
 
 # Copy Generic Client Config
 
@@ -141,6 +142,8 @@ comp-noadapt
 END
 
 sed -i $MYIP2 /etc/openvpn/client-udp-1194.ovpn;
+# pada tulisan xxx ganti dengan alamat ip address VPS anda 
+/etc/init.d/openvpn restart
 
 wget https://raw.githubusercontent.com/bobey6/airplane-vpn/master/vpn_usergen.sh
 chmod +x vpn_usergen.sh
