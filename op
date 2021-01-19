@@ -122,7 +122,9 @@ SERVER_CONFIG
 
 # Copy Generic Client Config
 
-cat > /etc/openvpn/client.ovpn.tmp << CLIENT_CONFIG
+# Buat config client UDP 1194
+cd /etc/openvpn
+cat > /etc/openvpn/client-udp-1194.ovpn 
 remote $SERVERIP 3128 udp
 nobind 
 dev tun
@@ -136,11 +138,29 @@ tls-cipher TLS-DHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-128-GCM-SHA2
 cipher AES-256-CBC
 comp-lzo
 comp-noadapt
-CLIENT_CONFIG
+END
+
+sed -i $MYIP2 /etc/openvpn/client-udp-1194.ovpn;
 
 wget https://raw.githubusercontent.com/bobey6/airplane-vpn/master/vpn_usergen.sh
 chmod +x vpn_usergen.sh
 
+# masukkan certificatenya ke dalam config client UDP 1194
+echo '<ca>' >> /etc/openvpn/client-udp-1194.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-1194.ovpn
+echo '</ca>' >> /etc/openvpn/client-udp-1194.ovpn
+echo '<cert>' >> /etc/openvpn/client-udp-1194.ovpn
+cat /etc/openvpn/server.crt >> /etc/openvpn/client-udp-1194.ovpn
+echo '</cert>' >> /etc/openvpn/client-udp-1194.ovpn
+echo '<key>' >> /etc/openvpn/client-udp-1194.ovpn
+cat /etc/openvpn/server.key >> /etc/openvpn/client-udp-1194.ovpn
+echo '</key>' >> /etc/openvpn/client-udp-1194.ovpn
+echo '<tls-auth>' >> /etc/openvpn/client-udp-1194.ovpn
+cat /etc/openvpn/ta.key >> /etc/openvpn/client-udp-1194.ovpn
+echo '</tls-auth>' >> /etc/openvpn/client-udp-1194.ovpn
+
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 1194 )
+cp /etc/openvpn/client-udp-1194.ovpn /home/vps/public_html/client-udp-1194.ovpn
 
 # iptables-persistent
 apt install iptables-persistent -y
